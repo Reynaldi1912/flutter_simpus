@@ -15,7 +15,7 @@ class _RegisterState extends State<Register>{
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _secureText = true;
-  String ? name, email, password;
+  String  name, email, password;
 
   showHide(){
     setState(() {
@@ -72,7 +72,7 @@ class _RegisterState extends State<Register>{
                             hintText: "Full Name",
                           ),
                           validator: (nameValue){
-                            if(nameValue!.isEmpty){
+                            if(nameValue.isEmpty){
                               return 'Please enter your full name';
                             }
                             name = nameValue;
@@ -87,7 +87,7 @@ class _RegisterState extends State<Register>{
                             hintText: "Email",
                           ),
                           validator: (emailValue){
-                            if(emailValue!.isEmpty){
+                            if(emailValue.isEmpty){
                               return 'Please enter your email';
                             }
                             email = emailValue;
@@ -109,7 +109,7 @@ class _RegisterState extends State<Register>{
                             ),
                           ),
                           validator: (passwordValue){
-                            if(passwordValue!.isEmpty){
+                            if(passwordValue.isEmpty){
                               return 'Please enter your password';
                             }
                             password = passwordValue;
@@ -132,7 +132,7 @@ class _RegisterState extends State<Register>{
                             ),
                           ),
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
+                            if (_formKey.currentState.validate()) {
                               _register();
                             }
                           },

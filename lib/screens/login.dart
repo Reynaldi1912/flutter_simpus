@@ -65,6 +65,7 @@ class _LoginState extends State<Login>{
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              color: Colors.white, // menambahkan properti color
                             ),
                           ),
                           SizedBox(height: 18),
@@ -73,15 +74,18 @@ class _LoginState extends State<Login>{
                             keyboardType: TextInputType.text,
                             decoration: InputDecoration(
                               hintText: "NIP",
+                              filled: true, // membuat background terisi
+                              fillColor: Colors.white, // memberikan warna putih pada background
                             ),
                             validator: (nameValue){
-                              if(nameValue!.isEmpty){
+                              if(nameValue.isEmpty){
                                 return 'Please enter your NIPP';
                               }
                               name = nameValue;
                               return null;
                             }
                           ),
+
                           SizedBox(height: 12),
                           TextFormField(
                             cursorColor: Colors.blue,
@@ -89,6 +93,8 @@ class _LoginState extends State<Login>{
                             obscureText: _secureText,
                             decoration: InputDecoration(
                               hintText: "Password",
+                              filled: true, // membuat background terisi
+                              fillColor: Colors.white, // memberikan warna putih pada background
                               suffixIcon: IconButton(
                                 onPressed: showHide,
                                 icon: Icon(_secureText
@@ -97,15 +103,19 @@ class _LoginState extends State<Login>{
                               ),
                             ),
                             validator: (passwordValue){
-                              if(passwordValue!.isEmpty){
+                              if(passwordValue.isEmpty){
                                 return 'Please enter your password';
                               }
                               password = passwordValue;
                               return null;
                             }
                           ),
+
                           SizedBox(height: 12),
                           TextButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+                            ),
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                               child: Text(
@@ -120,7 +130,7 @@ class _LoginState extends State<Login>{
                               ),
                             ),
                             onPressed: () {
-                              if (_formKey.currentState!.validate()) {
+                              if (_formKey.currentState.validate()) {
                                 _login();
                               }
                             },
@@ -143,13 +153,14 @@ class _LoginState extends State<Login>{
       _isLoading = true;
     });
     var data = {
-      'name' : name,
+      'id' : name,
       'password' : password
     };
 
     var res = await Network().auth(data, '/login');
     var body = json.decode(res.body);
-    if(body['success']){
+    print(body);
+    if(body['success'] && body['role']){
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('token', json.encode(body['token']));
       localStorage.setString('user', json.encode(body['user']));

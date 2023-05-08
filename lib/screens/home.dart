@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth/model/JadwalModel.dart';
+import 'package:flutter_auth/network/repositoryJadwal.dart';
+import 'package:flutter_auth/screens/drawerwidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_auth/network/api.dart';
 import 'dart:convert';
@@ -11,19 +14,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String? name, fullname;
+  String id, nama_lengkap;
 
+  List<Jadwal> listJadwal = [];
+  RepositoryJadwal repository = RepositoryJadwal();
+
+  
   @override
   void initState() {
     super.initState();
     _loadUserData();
-  }
-
-  _showMsg(msg) {
-    final snackBar = SnackBar(
-      content: Text(msg),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    getData();
   }
 
   _loadUserData() async {
@@ -32,10 +33,16 @@ class _HomeState extends State<Home> {
 
     if (user != null) {
       setState(() {
-        name = user['name'];
-        fullname = user['fullname'];
+        id = user['id'].toString();
+        nama_lengkap = user['nama_lengkap'];
       });
     }
+  }
+  getData() async {
+    List<Jadwal> data = await repository.getData();
+      setState(() {
+          listJadwal = data;
+      });
   }
 
   @override
@@ -46,94 +53,162 @@ class _HomeState extends State<Home> {
         centerTitle: true,
         backgroundColor: Colors.black,
       ),
-      body: const Center(
-        child: Text('My Page!'),
-      ),
-      drawer: _buildDrawer(),
-    );
-  }
-
-  void logout() async {
-    var res = await Network().getData('/logout');
-    var body = json.decode(res.body);
-    if (body['success']) {
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-      localStorage.remove('user');
-      localStorage.remove('token');
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Login()));
-    }
-  }
-
-//widget ini adalah isi dari sidebar atau drawer
-  Widget _buildDrawer() {
-    return SizedBox(
-      //membuat menu drawer
-      child: Drawer(
-        //membuat list,
-        //list digunakan untuk melakukan scrolling jika datanya terlalu panjang
-        child: ListView(
-          padding: EdgeInsets.zero,
-          //di dalam listview ini terdapat beberapa widget drawable
-          children: [
-            UserAccountsDrawerHeader(
-              //membuat gambar profil
-              currentAccountPicture: Image(
-                  image: NetworkImage(
-                      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png")),
-              //membuat nama akun
-              accountName: Text('${name}'),
-              //membuat nama email
-              accountEmail: Text('${fullname}'),
-              //memberikan background
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          "https://cdn.pixabay.com/photo/2016/04/24/20/52/laundry-1350593_960_720.jpg"),
-                      fit: BoxFit.cover)),
-            ),
-            //membuat list menu
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Input Kunjungan"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.people),
-              title: Text("History Kunjungan"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.money),
-              title: Text("Input Kegiatan"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.emoji_emotions),
-              title: Text("History Kegiatan"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.info),
-              title: Text("Exception"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.info),
-              title: Text("Setting"),
-              onTap: () {},
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.info),
-              title: Text("Logout"),
-              onTap: () {
-                _showMsg("Anda berhasil Logout");
-                logout();
-              },
-            ),
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color.fromARGB(255, 255, 255, 255) , Color.fromARGB(255, 60, 170, 182)])
         ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                margin:EdgeInsets.only(top: 20 , bottom: 20 , left: 50 , right: 50),
+                padding: EdgeInsets.only(top : 20),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 8, 241, 0),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Jadwal Hari Ini' , 
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
+                        ),
+                        Text('Selasa , 20 Desember 2022',
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
+                        )
+                      ],
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 255, 255, 255)
+                      ),
+                      child: Column(
+                        children: [
+                          Text("Penanggulangan stunting")
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                margin:EdgeInsets.only(top: 20 , bottom: 20 , left: 50 , right: 50),
+                padding: EdgeInsets.only(top : 20),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 8, 241, 0),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Desa Krasak',
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
+                        ),
+                        Text('Sudah Memasuki',
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
+                        )
+                      ],
+                    ),
+                    Container(
+                      width: double.infinity,
+                      height: 100,
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(top: 20),
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 255, 255, 255)
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                margin:EdgeInsets.only(top: 20 , bottom: 20 , left: 50 , right: 50),
+                padding: EdgeInsets.only(top : 20),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  height: 200,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Center(
+                                child: Container(child: Text("jadwal")),
+                              ),
+                            ),
+                          ],
+                        ),
+                        ListView.separated(
+                          padding: const EdgeInsets.all(8),
+                          shrinkWrap: true,
+                          itemCount: listJadwal.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              color: Colors.white,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(listJadwal[index].tanggal_mulai),
+                                      Text('target : 1'),
+                                    ],
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(listJadwal[index].kegiatan)
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(listJadwal[index].rincian_pelaksanaan)
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text('nama pelaksana 1 : '+listJadwal[index].nama_pelaksana1+' , nama pelaksana 2 : '+listJadwal[index].nama_pelaksana2)
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          separatorBuilder: (BuildContext context, int index) => const Divider(),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      drawer : DrawerWidget(
+        id: id,
+        nama_lengkap: nama_lengkap,
+        context: context,
       ),
     );
   }
