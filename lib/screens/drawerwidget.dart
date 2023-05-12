@@ -59,14 +59,15 @@ class DrawerWidget extends StatelessWidget {
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.info),
+              leading: Icon(Icons.cottage),
               title: Text("Setting"),
               onTap: () {},
             ),
-            Divider(),
+            SizedBox(height: 30),
             ListTile(
-              leading: Icon(Icons.info),
-              title: Text("Logout"),
+              tileColor: Colors.red,
+              leading: Icon(Icons.exit_to_app , color: Colors.white,),
+              title: Text("Logout" , style: TextStyle(color: Colors.white),),
               onTap: () {
                 _showMsg("Anda berhasil Logout");
                 logout();
