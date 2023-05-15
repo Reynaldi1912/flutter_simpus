@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'login.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import "package:latlong/latlong.dart" as latLng;
 import 'package:intl/intl.dart';
 import 'dart:math';
@@ -23,22 +24,26 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String id, nama_lengkap , nama_kegiatan = 'Tidak Ada Kegiatan' , rincian_kegiatan = '-' , nama_pelaksana1 = '-' , nama_pelaksana2 = '-' , nama_desa = '' ;
-  double latitude , longitude , latitude_desa , longitude_desa , jarak , radius;
+  double latitude = 0.0, longitude = 0.0 , latitude_desa = 0.0, longitude_desa = 0.0 , jarak =0.0 , radius =0.0;
   List<Jadwal> listJadwal = [];
   RepositoryJadwal repository = RepositoryJadwal();
   RepositoryDesa repositoryDesa = RepositoryDesa();
   Current_Location cl = Current_Location();
-  
+
   @override
   void initState() {
     super.initState();
+    getPosition();
     _loadUserData();
     getData();
-    getPosition();
+    print(latitude_desa);
   }
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("SIMPUS" , style: TextStyle(color: Colors.black),),
@@ -60,6 +65,7 @@ class _HomeState extends State<Home> {
               Container(
                 margin:EdgeInsets.only(top: 20 , left: 50 , right: 50),
                 padding: EdgeInsets.only(top : 5),
+                height: height*2/10,
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 24, 192, 18),
                   borderRadius: BorderRadius.circular(10),
@@ -85,20 +91,22 @@ class _HomeState extends State<Home> {
                         ],
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.all(5),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 255, 255, 255)
-                      ),
-                      child: Column(
-                        children: [
-                          Align(alignment: Alignment.centerLeft, child: Text(nama_kegiatan == null ? '' : nama_kegiatan , style: TextStyle(fontSize: 15 , fontWeight: FontWeight.bold),)),
-                          Align(alignment: Alignment.centerLeft, child: Text(rincian_kegiatan == null ? '' : rincian_kegiatan , style: TextStyle(fontSize: 12),)) , 
-                          SizedBox(height: 10),
-                          Align(alignment: Alignment.centerLeft, child: Text('Nama Pelaksana 1 : ' + (nama_pelaksana1 == null ? '' : nama_pelaksana1) , style: TextStyle(fontSize: 10 , color: Color.fromARGB(255, 189, 189, 189)))) , 
-                          Align(alignment: Alignment.centerLeft, child: Text('Nama Pelaksana 2 : ' + (nama_pelaksana2 == null ? '' : nama_pelaksana2), style: TextStyle(fontSize: 10 , color: Color.fromARGB(255, 189, 189, 189)))) , 
-                        ],
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 255, 255, 255)
+                        ),
+                        child: Column(
+                          children: [
+                            Align(alignment: Alignment.centerLeft, child: Text(nama_kegiatan == null ? '' : nama_kegiatan , style: TextStyle(fontSize: 15 , fontWeight: FontWeight.bold),)),
+                            Align(alignment: Alignment.centerLeft, child: Text(rincian_kegiatan == null ? '' : rincian_kegiatan , style: TextStyle(fontSize: 12),)) , 
+                            SizedBox(height: 10),
+                            Align(alignment: Alignment.centerLeft, child: Text('Nama Pelaksana 1 : ' + (nama_pelaksana1 == null ? '' : nama_pelaksana1) , style: TextStyle(fontSize: 10 , color: Color.fromARGB(255, 189, 189, 189)))) , 
+                            Align(alignment: Alignment.centerLeft, child: Text('Nama Pelaksana 2 : ' + (nama_pelaksana2 == null ? '' : nama_pelaksana2), style: TextStyle(fontSize: 10 , color: Color.fromARGB(255, 189, 189, 189)))) , 
+                          ],
+                        ),
                       ),
                     )
                   ],
@@ -108,7 +116,7 @@ class _HomeState extends State<Home> {
                 margin:EdgeInsets.only( left: 50 , right: 50),
                 padding: EdgeInsets.only(top: 10 ),
                 decoration: BoxDecoration(
-                  color: jarak == null ? Color.fromARGB(255, 115, 115, 115) : (jarak > radius ? Colors.red: Color.fromARGB(255, 24, 192, 18)),
+                  color: getJarak() == 0 ? Color.fromARGB(255, 115, 115, 115) : (getJarak() > radius ? Colors.red: Color.fromARGB(255, 24, 192, 18)),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
@@ -123,7 +131,7 @@ class _HomeState extends State<Home> {
                               color: Colors.white
                             ),
                           ),
-                          Text(jarak == null ? 'Loading' : (jarak > radius ? '(- '+(jarak - radius).toStringAsFixed(2)+' KM)': 'Sudah Memasuki'),
+                          Text(getJarak() == 0 ? 'Loading' : (getJarak() > radius ? '(- '+(getJarak() - radius).toStringAsFixed(2)+' KM)': 'Sudah Memasuki'),
                             style: TextStyle(
                               color: Colors.white
                             ),
@@ -133,14 +141,13 @@ class _HomeState extends State<Home> {
                     ),
                     Container(
                       margin: EdgeInsets.only(top: 5),
-                      width: double.infinity,
-                      height: 100,
+                      height: height*2/10,
                       decoration: BoxDecoration(
                         color: Color.fromARGB(255, 255, 255, 255)
                       ),
-                      child: latitude == null || longitude == null
-                            ? MyMapLoadingWidget() // Tampilkan loading widget jika latitude dan longitude masih null
-                            : MyMapDisplayWidget(latitude: latitude, longitude: longitude), // Tampilkan peta jika sudah ada nilai latitude dan longitude
+                      child: latitude == 0 || longitude == 0
+                            ? MyMapLoadingWidget() 
+                            : MyMapDisplayWidget(latitude: latitude, longitude: longitude), 
                     ),
                   ],
                 ),
@@ -153,7 +160,7 @@ class _HomeState extends State<Home> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Container(
-                  height: 250,
+                  height: height*3/10,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
@@ -161,13 +168,20 @@ class _HomeState extends State<Home> {
                           children: [
                             Expanded(
                               child: Center(
-                                child: Container(padding: EdgeInsets.only(bottom: 10), child: Text("jadwal Kegiatan" , style: TextStyle(fontSize: 25 , fontWeight: FontWeight.bold),)),
+                                child: Container(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                  child: Text(
+                                    "jadwal Kegiatan",
+                                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         ),
                         ListView.separated(
                           padding: const EdgeInsets.all(8),
+                          physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: listJadwal.length,
                           itemBuilder: (BuildContext context, int index) {
@@ -185,20 +199,26 @@ class _HomeState extends State<Home> {
                                   SizedBox(height: 7),
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text(listJadwal[index].kegiatan , style: TextStyle(fontWeight: FontWeight.bold),)
+                                    child: Text(
+                                      listJadwal[index].kegiatan,
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                   SizedBox(height: 2,),
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text(listJadwal[index].rincian_pelaksanaan , style: TextStyle(fontSize: 10 , color: Color.fromARGB(255, 23, 23, 23)),)
+                                    child: Text(
+                                      listJadwal[index].rincian_pelaksanaan,
+                                      style: TextStyle(fontSize: 10, color: Color.fromARGB(255, 23, 23, 23)),
+                                    ),
                                   ),
                                   SizedBox(height: 13,),
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text('pelaksana 1 : '+listJadwal[index].nama_pelaksana1+' , pelaksana 2 : '+listJadwal[index].nama_pelaksana2 , style: TextStyle(
-                                      fontSize: 10,
-                                      color: Color.fromARGB(255, 173, 173, 173)
-                                    ),)
+                                    child: Text(
+                                      'pelaksana 1 : ' + listJadwal[index].nama_pelaksana1 + ' , pelaksana 2 : ' + listJadwal[index].nama_pelaksana2,
+                                      style: TextStyle(fontSize: 10, color: Color.fromARGB(255, 173, 173, 173)),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -209,6 +229,7 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
+
                 ),
               ),
             ],
@@ -218,11 +239,17 @@ class _HomeState extends State<Home> {
       drawer : DrawerWidget(
         id: id,
         nama_lengkap: nama_lengkap,
+        jarak : getJarak(),
+        radius : radius,
         context: context,
       ),
     );
   }
 
+  double getJarak(){
+    return Geolocator.distanceBetween(latitude, longitude, latitude_desa, longitude_desa) / 1000;
+  }
+  
   void getPosition() async {
     try {
       Position position = await cl.getCurrentLocation();
@@ -230,7 +257,6 @@ class _HomeState extends State<Home> {
         setState(() {
           latitude = position.latitude;
           longitude = position.longitude;
-          jarak = Geolocator.distanceBetween(latitude, longitude, latitude_desa, longitude_desa) / 1000;
         });
       }
     }catch(e){
@@ -250,7 +276,7 @@ class _HomeState extends State<Home> {
       });
     }
   }
-  getData() async {
+  Future<void> getData() async {
     List<Jadwal> data = await repository.getData(1);
     if(await repository.getJadwalNow(1) != null){
       nama_kegiatan = (await repository.getJadwalNow(1))['kegiatan'].toString();
@@ -258,12 +284,14 @@ class _HomeState extends State<Home> {
       nama_pelaksana1 = (await repository.getJadwalNow(1))['nama_pelaksana1'].toString();
       nama_pelaksana2 = (await repository.getJadwalNow(1))['nama_pelaksana2'].toString(); 
     }
-    latitude_desa = double.parse((await repositoryDesa.getDesa(1))['latitude']);
-    longitude_desa = double.parse((await repositoryDesa.getDesa(1))['longitude']);
-    radius = double.parse((await repositoryDesa.getDesa(1))['radius']);
-    nama_desa = (await repositoryDesa.getDesa(1))['nama_desa'];
+      double lat_desa = double.parse((await repositoryDesa.getDesa(1))['latitude']);
+      longitude_desa = double.parse((await repositoryDesa.getDesa(1))['longitude']);
+      radius = double.parse((await repositoryDesa.getDesa(1))['radius']);
+      nama_desa = (await repositoryDesa.getDesa(1))['nama_desa'].toString();
     setState(() {
         listJadwal = data;
+        latitude_desa = lat_desa;
+        print(latitude_desa);
     });
   }
 

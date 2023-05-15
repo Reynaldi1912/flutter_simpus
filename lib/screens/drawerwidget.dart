@@ -1,4 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_auth/screens/errorPage/error-radius.dart';
+import 'package:flutter_auth/screens/store-kunjungan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_auth/network/api.dart';
 import 'dart:convert';
@@ -7,9 +11,10 @@ import 'login.dart';
 class DrawerWidget extends StatelessWidget {
   final String id;
   final String nama_lengkap;
+  final double jarak , radius;
   final BuildContext context;
 
-  DrawerWidget({this.id, this.nama_lengkap, this.context});
+  DrawerWidget({this.id, this.nama_lengkap,this.jarak, this.radius, this.context});
 
   @override
   Widget build(BuildContext context) {
@@ -18,25 +23,49 @@ class DrawerWidget extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            UserAccountsDrawerHeader(
-              currentAccountPicture: Image(
-                image: NetworkImage(
-                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"),
-              ),
-              accountName: Text('$id'),
-              accountEmail: Text('$nama_lengkap'),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                      "https://cdn.pixabay.com/photo/2016/04/24/20/52/laundry-1350593_960_720.jpg"),
-                  fit: BoxFit.cover,
+            Container(
+              padding: EdgeInsets.all(20),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(Icons.supervised_user_circle_outlined , size: 60,color: Colors.white,),
+                    SizedBox(height: 5,),
+                    Text("Petugas" , style: TextStyle(fontSize: 15 , fontWeight: FontWeight.w400 , color: Colors.white)),
+                    SizedBox(height: 5,),
+                    Text('$nama_lengkap' , style: TextStyle(fontSize: 15 , fontWeight: FontWeight.bold , color: Colors.white),),
+                    Text('($id)' , style: TextStyle(fontSize: 15 , fontWeight: FontWeight.w400 , color: Colors.white),),
+                  ],
                 ),
               ),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient( begin : Alignment.topLeft, end: Alignment.bottomRight, colors : [Color.fromARGB(255, 22, 164, 0) , Color.fromARGB(255, 160, 160, 160)]),
+              ),
             ),
+            Divider(),
             ListTile(
               leading: Icon(Icons.home),
               title: Text("Input Kunjungan"),
-              onTap: () {},
+              onTap: () {
+                if(jarak > radius && jarak < 5000){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => ErrorRadius(
+                          jarak: jarak,
+                          radius : radius
+                        )
+                    ),
+                  );
+                }else if(jarak < radius){
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => StoreKunjungan()
+                    ),
+                );
+                }
+                
+              },
             ),
             ListTile(
               leading: Icon(Icons.people),
@@ -64,14 +93,19 @@ class DrawerWidget extends StatelessWidget {
               onTap: () {},
             ),
             SizedBox(height: 30),
-            ListTile(
-              tileColor: Colors.red,
-              leading: Icon(Icons.exit_to_app , color: Colors.white,),
-              title: Text("Logout" , style: TextStyle(color: Colors.white),),
-              onTap: () {
-                _showMsg("Anda berhasil Logout");
-                logout();
-              },
+            Container(
+              padding: EdgeInsets.only(left: 20 , right: 20),
+              child: ElevatedButton(
+                  onPressed: () {
+                     _showMsg("Anda berhasil Logout");
+                    logout();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  child: const Text('Logout')),
             ),
           ],
         ),

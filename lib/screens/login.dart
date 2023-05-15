@@ -47,8 +47,17 @@ class _LoginState extends State<Login>{
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  child: Text("SIMPUS"),
+                Center(
+                  child: Container(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "SELAMAT DATANG \n SISTEM INFORMASI MANAJEMEN PUSKESMAS KEDUNGJAJANG",
+                        style: TextStyle(color: Colors.white , fontWeight: FontWeight.bold , fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 1/8),
@@ -59,16 +68,6 @@ class _LoginState extends State<Login>{
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            "Welcome to SIMPUS Kedungjajang",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white, // menambahkan properti color
-                            ),
-                          ),
-                          SizedBox(height: 18),
                           TextFormField(
                             cursorColor: Colors.blue,
                             keyboardType: TextInputType.text,

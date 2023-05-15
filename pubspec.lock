@@ -126,14 +126,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.12.0"
-  flutter_plugin_android_lifecycle:
-    dependency: transitive
+  flutter_slidable:
+    dependency: "direct main"
     description:
-      name: flutter_plugin_android_lifecycle
-      sha256: "96af49aa6b57c10a312106ad6f71deed5a754029c24789bbf620ba784f0bd0b0"
+      name: flutter_slidable
+      sha256: cc4231579e3eae41ae166660df717f4bad1359c87f4a4322ad8ba1befeb3d2be
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.14"
+    version: "3.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -168,22 +168,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
-  google_maps_flutter:
-    dependency: "direct main"
-    description:
-      name: google_maps_flutter
-      sha256: f04f0a4948ff2c24cca59c9e53521baa72f4da685541862d3130429989bd768f
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.10"
-  google_maps_flutter_platform_interface:
-    dependency: transitive
-    description:
-      name: google_maps_flutter_platform_interface
-      sha256: "971b1bd0fe500343caa940460cf3ec4f796714a9212093e0d4d53de9e33bd87b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   http:
     dependency: "direct main"
     description:
@@ -453,14 +437,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  stream_transform:
-    dependency: transitive
-    description:
-      name: stream_transform
-      sha256: "14a00e794c7c11aa145a170587321aedce29769c08d7f58b1d141da75e3b1c6f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   string_scanner:
     dependency: transitive
     description:
@@ -559,4 +535,4 @@ packages:
     version: "0.1.2"
 sdks:
   dart: ">=2.18.0 <3.0.0"
-  flutter: ">=3.0.0"
+  flutter: ">=3.7.0"
