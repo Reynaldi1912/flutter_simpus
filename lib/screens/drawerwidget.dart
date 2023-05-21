@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_auth/network/current_location.dart';
+import 'package:flutter_auth/screens/errorPage/error-jadwal.dart';
 import 'package:flutter_auth/screens/errorPage/error-radius.dart';
 import 'package:flutter_auth/screens/store-kunjungan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,9 +14,12 @@ class DrawerWidget extends StatelessWidget {
   final String id;
   final String nama_lengkap;
   final double jarak , radius;
+  final int id_jadwal;
   final BuildContext context;
 
-  DrawerWidget({this.id, this.nama_lengkap,this.jarak, this.radius, this.context});
+  Current_Location cl = Current_Location();
+  
+  DrawerWidget({this.id, this.nama_lengkap,this.jarak, this.radius, this.id_jadwal, this.context});
 
   @override
   Widget build(BuildContext context) {
@@ -43,52 +48,62 @@ class DrawerWidget extends StatelessWidget {
             ),
             Divider(),
             ListTile(
-              leading: Icon(Icons.home),
+              leading: Icon(Icons.assignment),
               title: Text("Input Kunjungan"),
               onTap: () {
-                if(jarak > radius && jarak < 5000){
+                if (id_jadwal == 0) {
                   Navigator.push(
                     context,
                     new MaterialPageRoute(
-                        builder: (context) => ErrorRadius(
-                          jarak: jarak,
-                          radius : radius
+                        builder: (context) => ErrorJadwal(
+                          id_jadwal: id_jadwal
                         )
                     ),
                   );
-                }else if(jarak < radius){
-                  Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                        builder: (context) => StoreKunjungan()
-                    ),
-                );
+                }else{
+                  if(jarak > radius && jarak < 5000){
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => ErrorRadius(
+                            jarak: jarak,
+                            radius : radius
+                          )
+                      ),
+                    );
+                  }else if(jarak < radius){
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => StoreKunjungan()
+                      ),
+                    );
+                  }
                 }
-                
               },
             ),
             ListTile(
-              leading: Icon(Icons.people),
+              leading: Icon(Icons.history),
               title: Text("History Kunjungan"),
               onTap: () {},
             ),
+            // ListTile(
+            //   leading: Icon(Icons.money),
+            //   title: Text("Input Kegiatan"),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: Icon(Icons.emoji_emotions),
+            //   title: Text("History Kegiatan"),
+            //   onTap: () {},
+            // ),
             ListTile(
-              leading: Icon(Icons.money),
-              title: Text("Input Kegiatan"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.emoji_emotions),
-              title: Text("History Kegiatan"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.info),
+              leading: Icon(Icons.message),
               title: Text("Exception"),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.cottage),
+              leading: Icon(Icons.settings),
               title: Text("Setting"),
               onTap: () {},
             ),
@@ -96,14 +111,15 @@ class DrawerWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.only(left: 20 , right: 20),
               child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                      _showMsg("Anda berhasil Logout");
-                    logout();
+                    await logout(context);
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
+                    backgroundColor: Colors.red
                   ),
                   child: const Text('Logout')),
             ),
@@ -120,7 +136,7 @@ class DrawerWidget extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void logout() async {
+  void logout(BuildContext context) async {
     var res = await Network().getData('/logout');
     var body = json.decode(res.body);
     if (body['success']) {

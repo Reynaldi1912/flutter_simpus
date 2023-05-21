@@ -1,10 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter_auth/model/JadwalModel.dart';
+import 'package:flutter_auth/network/api.dart';
 import 'package:http/http.dart' as http;
 
 class RepositoryJadwal {
-  final _baseUrl = 'http://127.0.0.1:8000/api/';
+  Network network = Network();
+  String _baseUrl;
+
+  RepositoryJadwal() {
+    _baseUrl = network.getUrl();
+  }
 
   Future getData(id) async{
     try {

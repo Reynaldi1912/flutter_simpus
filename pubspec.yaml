@@ -42,6 +42,9 @@ dependencies:
   latlng: ^1.0.0
   geolocator: ^6.2.1
   flutter_slidable: ^3.0.0
+  pull_to_refresh: ^2.0.0
+  path_provider: ^1.6.28
+  image_picker: ^0.6.7+22
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -68,7 +71,7 @@ flutter:
   assets:
   - assets/userIcon.png
   - assets/location.png
-
+  - assets/jadwalIcon.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

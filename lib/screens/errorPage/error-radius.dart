@@ -12,23 +12,28 @@ class ErrorRadius extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("SIMPUS"),
+        title: Text("SIMPUS" , style: TextStyle(color: Colors.black),),
+        iconTheme: IconThemeData(color: Colors.black),
+        centerTitle: true,
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),      
       ),
       body: Container(
         margin: EdgeInsets.all(MediaQuery.of(context).size.width * 1/10),
         decoration: BoxDecoration(
-          color: Colors.red
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(20)
         ),
+
         child: Center(
           child: Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.only(right: 30 , left: 30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset('assets/location.png'),
                 Align(alignment: Alignment.center, child: Text("Anda Belum Memasuki Radius Desa" , style: TextStyle(color: Colors.white , fontWeight: FontWeight.bold , fontSize: 25),textAlign: TextAlign.center,)),
                 SizedBox(height: 20),
-                Text("Jarak Anda Kurang "+ (jarak - radius).toString() +" KM" , style: TextStyle(color: Colors.white , fontWeight: FontWeight.w200 , fontSize: 20 ),textAlign: TextAlign.center,)
+                Text("Jarak Anda Kurang "+ (jarak - radius).toStringAsFixed(2) +" KM" , style: TextStyle(color: Colors.white , fontWeight: FontWeight.w200 , fontSize: 20 ),textAlign: TextAlign.center,)
               ],
             ),
           ),

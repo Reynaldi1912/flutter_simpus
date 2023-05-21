@@ -1,9 +1,12 @@
+import 'package:flutter_auth/network/repositoryDesa.dart';
 import 'package:geolocator/geolocator.dart';
 
 class Current_Location{
 
-  double latitude;
-  double longitude;
+  double latitude , longitude , latitude_desa , longitude_desa , radius ;
+  String nama_desa;
+  RepositoryDesa repositoryDesa = RepositoryDesa();
+
 
   Future<Position> getCurrentLocation() async {
     bool serviceEnabled;
@@ -30,5 +33,4 @@ class Current_Location{
     // Mendapatkan posisi saat ini
     return await Geolocator.getCurrentPosition();
   }
-
 }

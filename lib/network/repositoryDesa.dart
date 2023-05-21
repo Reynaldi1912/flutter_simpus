@@ -1,9 +1,15 @@
 import 'dart:convert';
 
+import 'package:flutter_auth/network/api.dart';
 import 'package:http/http.dart' as http;
 
 class RepositoryDesa {
-  final _baseUrl = 'http://127.0.0.1:8000/api/';
+  Network network = Network();
+  String _baseUrl;
+
+  RepositoryDesa() {
+    _baseUrl = network.getUrl();
+  }
 
   Future getDesa(id) async{
     try {
