@@ -25,6 +25,86 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  bs_flutter:
+    dependency: "direct main"
+    description:
+      name: bs_flutter
+      sha256: afd586edd9d45007968f79827f33b3177de0c12a4c9f64adc5e46b57b7b9db58
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.7"
+  bs_flutter_alert:
+    dependency: transitive
+    description:
+      name: bs_flutter_alert
+      sha256: "35db83e3db322ad044794f5ea608543356ca2e75615d26cba3bf11a113256387"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  bs_flutter_buttons:
+    dependency: transitive
+    description:
+      name: bs_flutter_buttons
+      sha256: ad5263a8079939a69cb017b7f8868f28db498d52cc8002f66d8d68fb0d0e4055
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.8"
+  bs_flutter_card:
+    dependency: transitive
+    description:
+      name: bs_flutter_card
+      sha256: "498b6b9ca081df54ee772ae2c727eed5410159bd0a9d4d2cb07ed2ee9d3d5ad6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  bs_flutter_datatable:
+    dependency: transitive
+    description:
+      name: bs_flutter_datatable
+      sha256: d8300068e679c7cf61f1351094a00121f013d51b41f6a063c655184d991f2e84
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.5"
+  bs_flutter_inputtext:
+    dependency: transitive
+    description:
+      name: bs_flutter_inputtext
+      sha256: "11f97155826615b4a3867eafcc5fd3749d5f535043454e4992919f2402551e9b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
+  bs_flutter_modal:
+    dependency: transitive
+    description:
+      name: bs_flutter_modal
+      sha256: a29ee8c83df35e6c861b58f1f175de6118408583357cdb9bdc5597565b49a612
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.6"
+  bs_flutter_responsive:
+    dependency: transitive
+    description:
+      name: bs_flutter_responsive
+      sha256: "24de525e91d06cad150a7b1f73f1012de8fe0382c35b9f651d4ff7b10c675f04"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  bs_flutter_selectbox:
+    dependency: transitive
+    description:
+      name: bs_flutter_selectbox
+      sha256: a8d9b3fb5ed635de2df923c279969d80e7ed672b7979b34169df3a48e1085511
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
+  bs_flutter_utils:
+    dependency: transitive
+    description:
+      name: bs_flutter_utils
+      sha256: "4d405d1a2ac8287dacb51b464ca2496a785334c75a49263e914038d600ed25ff"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   characters:
     dependency: transitive
     description:

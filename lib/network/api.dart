@@ -1,9 +1,10 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Network{
-  final String _url = 'https://6af3-125-166-116-175.ngrok-free.app/api/';
+  final String _url = 'http://103.150.191.230/api/';
   // 192.168.1.2 is my IP, change with your IP address
   var token;
 

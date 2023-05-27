@@ -1,3 +1,4 @@
+import 'package:bs_flutter/bs_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -16,6 +17,11 @@ class StoreKunjungan extends StatefulWidget {
 class _StoreKunjunganState extends State<StoreKunjungan> {
   DateTime selectedDate;
   File image; //for captured image
+
+  BsSelectBoxController _select2 = BsSelectBoxController(options: [
+    BsSelectBoxOption(value: 1, text: Text('punya')),
+    BsSelectBoxOption(value: 0, text: Text('tidak')),
+  ]);
 
   @override
   void initState() {
@@ -185,27 +191,25 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                     ],
                   ),
                   SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          cursorColor: Colors.blue,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: "Anggota Keluarga",
-                            filled: true, // membuat background terisi
-                            fillColor: Colors.white, 
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                                width: 2,
-                              ),
-                            ),
-                          ),
+                  TextFormField(
+                    cursorColor: Colors.blue,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: "Jumlah Anggota Keluarga",
+                      filled: true, // membuat background terisi
+                      fillColor: Colors.white, 
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Colors.blue,
+                          width: 2,
                         ),
                       ),
-                      SizedBox(width: 5,),
+                    ),
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    children: [
                       Expanded(
                         child: TextFormField(
                           cursorColor: Colors.blue,
@@ -268,21 +272,14 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                       ),
                       SizedBox(width: 5,),
                       Expanded(
-                        child: TextFormField(
-                          cursorColor: Colors.blue,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: "BPJS",
-                            filled: true, // membuat background terisi
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Colors.blue,
-                                width: 2,
-                              ),
-                            ),
-                          ),
+                        child: BsSelectBox(
+                          hintTextLabel: 'BPJS',
+                          controller: _select2,
+                          // searchable: true,
+                          autoClose: true,
+                          dialogStyle: BsDialogBoxStyle(
+                            borderRadius: BorderRadius.circular(20.0),
+                          )
                         ),
                       ),
                     ],

@@ -45,6 +45,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   path_provider: ^1.6.28
   image_picker: ^0.6.7+22
+  bs_flutter: ^0.4.7
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,8 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_auth/network/api.dart';
-import 'register.dart';
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'home.dart';
 
 class Login extends StatefulWidget{
@@ -158,7 +159,6 @@ class _LoginState extends State<Login>{
 
     var res = await Network().auth(data, '/login');
     var body = json.decode(res.body);
-    print(body);
     if(body['success'] && body['role']){
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('token', json.encode(body['token']));

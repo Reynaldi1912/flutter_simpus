@@ -26,7 +26,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   String id, nama_lengkap , nama_kegiatan = 'Tidak Ada Kegiatan' , rincian_kegiatan = '-' , nama_pelaksana1 = '-' , nama_pelaksana2 = '-' , nama_desa = '' ;
   double latitude = 0.0, longitude = 0.0 , latitude_desa = 0.0, longitude_desa = 0.0 , jarak =0.0 , radius =0.0 ;
-  bool _isLoading = false;
+  bool _isLoading = false , _isTimer = false;
   int id_jadwal = 0 , id_desa;
   List<Jadwal> listJadwal = [];
   RepositoryJadwal repository = RepositoryJadwal();
@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
     id_jadwal = 0;
     await _loadUserData();
     await getPosition();
-    await getData();  
+    await getData();
 
     setState(() {
       _isLoading = false;
@@ -284,12 +284,12 @@ class _HomeState extends State<Home> {
         ),
       ),
       drawer : DrawerWidget(
-        id: id,
-        nama_lengkap: nama_lengkap,
-        jarak : getJarak(),
-        radius : radius,
-        id_jadwal : id_jadwal,
-        context: context,
+        // id: id,
+        // nama_lengkap: nama_lengkap,
+        // jarak : getJarak(),
+        // radius : radius,
+        // id_jadwal : id_jadwal,
+        // context: context,
       ),
     );
   }
