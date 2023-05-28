@@ -1,21 +1,19 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_auth/model/JadwalModel.dart';
 import 'package:flutter_auth/network/current_location.dart';
 import 'package:flutter_auth/network/repositoryDesa.dart';
 import 'package:flutter_auth/network/repositoryJadwal.dart';
 import 'package:flutter_auth/screens/drawerwidget.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_auth/network/api.dart';
-import 'dart:convert';
-import 'login.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import "package:latlong/latlong.dart" as latLng;
 import 'package:pull_to_refresh/pull_to_refresh.dart' as pullToRefresh;
-import 'package:intl/intl.dart';
-import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Home extends StatefulWidget {
@@ -24,27 +22,66 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String id, nama_lengkap , nama_kegiatan = 'Tidak Ada Kegiatan' , rincian_kegiatan = '-' , nama_pelaksana1 = '-' , nama_pelaksana2 = '-' , nama_desa = '' ;
-  double latitude = 0.0, longitude = 0.0 , latitude_desa = 0.0, longitude_desa = 0.0 , jarak =0.0 , radius =0.0 ;
-  bool _isLoading = false , _isTimer = false;
-  int id_jadwal = 0 , id_desa;
+  String id, 
+        nama_lengkap , 
+        nama_kegiatan = 'Tidak Ada Kegiatan' , 
+        rincian_kegiatan = '-' , 
+        nama_pelaksana1 = '-' , 
+        nama_pelaksana2 = '-' , 
+        nama_desa = '' ;
+
+  double latitude = 0.0, 
+        longitude = 0.0 , 
+        latitude_desa = 0.0, 
+        longitude_desa = 0.0 , 
+        jarak =0.0 , radius =0.0 ;
+
+  bool _isLoading = false , 
+      _isTimer = false;
+
+  int id_jadwal = 0 ,
+      id_desa;
+
+  final pullToRefresh.RefreshController _refreshController =pullToRefresh.RefreshController();
+
   List<Jadwal> listJadwal = [];
   RepositoryJadwal repository = RepositoryJadwal();
   RepositoryDesa repositoryDesa = RepositoryDesa();
   Current_Location cl = Current_Location();
 
-
-  final pullToRefresh.RefreshController _refreshController =pullToRefresh.RefreshController();
-  // Fungsi pembaruan
   Future<void> _onRefresh() async {
     setState(() {
       _isLoading = true;
     });
 
+    Timer(Duration(seconds: 10), () {//Menampilkan Pop up Error Jika Data Yang Ditampilkan Gagal Diload selama 10 detik
+      if (_isLoading) {
+        setState(() {
+          _isLoading = false;
+        });
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Data Gagal Dimuat. Periksa Kembali Koneksi Internet Anda'),
+            actions: [
+              TextButton(
+                child: Text('Refresh'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _onRefresh();
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    });
+
     nama_kegiatan = 'Tidak Ada Kegiatan';
-    rincian_kegiatan = '-' ;
-    nama_pelaksana1 = '-' ; 
-    nama_pelaksana2 = '-' ;
+    rincian_kegiatan = '-';
+    nama_pelaksana1 = '-';
+    nama_pelaksana2 = '-';
     id_jadwal = 0;
     await _loadUserData();
     await getPosition();
@@ -56,6 +93,7 @@ class _HomeState extends State<Home> {
     _refreshController.refreshCompleted();
   }
 
+
   @override
   void initState(){
     super.initState();
@@ -63,17 +101,14 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> _prepareData() async {
-    // Mengatur _isLoading sebagai true saat halaman dimuat
     setState(() {
       _isLoading = true;
     });
 
-    // Panggil fungsi persiapan lainnya
     await _loadUserData();
     await getPosition();
     await getData();
 
-    // Setelah semua persiapan selesai, atur _isLoading sebagai false
     setState(() {
       _isLoading = false;
     });
@@ -109,7 +144,7 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  margin:EdgeInsets.only(top: 20 , left: 50 , right: 50),
+                  margin:EdgeInsets.only(top: 20 , left: 10 , right: 10),
                   padding: EdgeInsets.only(top : 5),
                   height: height*2/10,
                   decoration: BoxDecoration(
@@ -159,7 +194,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Container(
-                  margin:EdgeInsets.only( left: 50 , right: 50),
+                  margin:EdgeInsets.only( left: 10 , right: 10),
                   padding: EdgeInsets.only(top: 10 ),
                   decoration: BoxDecoration(
                     color: getJarak() == 0 ? Color.fromARGB(255, 115, 115, 115) : (getJarak() > radius ? Colors.red: Color.fromARGB(255, 24, 192, 18)),
@@ -199,7 +234,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Container(
-                  margin:EdgeInsets.only( bottom: 20 , left: 50 , right: 50),
+                  margin:EdgeInsets.only( bottom: 20 , left: 10 , right: 10),
                   padding: EdgeInsets.only(top : 20),
                   decoration: BoxDecoration(
                     color: Color.fromARGB(255, 255, 255, 255),
@@ -308,7 +343,6 @@ class _HomeState extends State<Home> {
         });
       }
     }catch(e){
-      // Tangani kesalahan yang mungkin terjadi
       print('Error: $e');
     }
   }

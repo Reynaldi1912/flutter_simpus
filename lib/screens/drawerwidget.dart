@@ -1,7 +1,8 @@
-import 'dart:ui';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_auth/model/JadwalModel.dart';
+import 'package:flutter_auth/network/api.dart';
 import 'package:flutter_auth/network/current_location.dart';
 import 'package:flutter_auth/network/repositoryDesa.dart';
 import 'package:flutter_auth/network/repositoryJadwal.dart';
@@ -13,8 +14,7 @@ import 'package:flutter_auth/screens/setting.dart';
 import 'package:flutter_auth/screens/store-kunjungan.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_auth/network/api.dart';
-import 'dart:convert';
+
 import 'login.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -85,40 +85,48 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ),
             ),
             Divider(),
-             _isLoading ? Center(child: CircularProgressIndicator()) : ListTile(
+             ListTile(
               leading: Icon(Icons.assignment),
               title: Text("Input Kunjungan"),
               onTap: () {
+                if (_isLoading) {
+                  // Jika sedang loading, tidak melakukan apa-apa
+                  return;
+                }
+
                 if (id_jadwal == 0) {
                   Navigator.push(
                     context,
-                    new MaterialPageRoute(
-                        builder: (context) => ErrorJadwal(
-                          id_jadwal: id_jadwal
-                        )
+                    MaterialPageRoute(
+                      builder: (context) => ErrorJadwal(id_jadwal: id_jadwal),
                     ),
                   );
-                }else{
-                  if(jarak > radius && jarak < 5000){
+                } else {
+                  if (jarak > radius && jarak < 5000) {
                     Navigator.push(
                       context,
-                      new MaterialPageRoute(
-                          builder: (context) => ErrorRadius(
-                            jarak: jarak,
-                            radius : radius
-                          )
+                      MaterialPageRoute(
+                        builder: (context) => ErrorRadius(jarak: jarak, radius: radius),
                       ),
                     );
-                  }else if(jarak < radius){
+                  } else if (jarak < radius) {
                     Navigator.push(
                       context,
-                      new MaterialPageRoute(
-                          builder: (context) => StoreKunjungan()
-                      ),
+                      MaterialPageRoute(builder: (context) => StoreKunjungan()),
                     );
                   }
                 }
               },
+              trailing: _isLoading
+                  ? SizedBox(
+                    height: 10,
+                    width: 10,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, // Atur lebar garis lingkaran
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue), // Atur warna
+                      ),
+                  )
+                  : null, // Jika tidak loading, kosongkan trailing
             ),
             ListTile(
               leading: Icon(Icons.history),
