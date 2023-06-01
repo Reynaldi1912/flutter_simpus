@@ -175,7 +175,7 @@ class _ExceptionPetugasState extends State<ExceptionPetugas> {
                                                           await getData();
                                                           ScaffoldMessenger.of(context).showSnackBar(
                                                             SnackBar(
-                                                              padding: EdgeInsets.all(10),
+                                                              padding: EdgeInsets.all(5),
                                                               backgroundColor: Colors.green, // Warna latar belakang
                                                               content: Row(
                                                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -200,7 +200,7 @@ class _ExceptionPetugasState extends State<ExceptionPetugas> {
                                                               ),
                                                               behavior: SnackBarBehavior.floating,
                                                               elevation: 30,
-                                                              duration: Duration(seconds: 7), // Durasi tampilan snackbar
+                                                              duration: Duration(seconds: 5), // Durasi tampilan snackbar
                                                             ),
                                                           );
                                                           Navigator.of(context).pop();

@@ -106,7 +106,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ErrorRadius(jarak: jarak, radius: radius),
+                        builder: (context) => ErrorRadius(jarak: getJarak(), radius: radius),
                       ),
                     );
                   } else if (getJarak() < radius) {
