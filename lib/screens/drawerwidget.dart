@@ -87,7 +87,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             Divider(),
              ListTile(
               leading: Icon(Icons.assignment),
-              title: Text("Input Kunjungan"),
+              title: Text('Input Kunjungan'),
               onTap: () {
                 if (_isLoading) {
                   // Jika sedang loading, tidak melakukan apa-apa
@@ -102,14 +102,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                   );
                 } else {
-                  if (jarak > radius && jarak < 5000) {
+                  if (getJarak() > radius && getJarak() < 5000) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ErrorRadius(jarak: jarak, radius: radius),
                       ),
                     );
-                  } else if (jarak < radius) {
+                  } else if (getJarak() < radius) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => StoreKunjungan()),
@@ -140,16 +140,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 );
               },
             ),
-            // ListTile(
-            //   leading: Icon(Icons.money),
-            //   title: Text("Input Kegiatan"),
-            //   onTap: () {},
-            // ),
-            // ListTile(
-            //   leading: Icon(Icons.emoji_emotions),
-            //   title: Text("History Kegiatan"),
-            //   onTap: () {},
-            // ),
+
             ListTile(
               leading: Icon(Icons.message),
               title: Text("Exception"),
@@ -254,6 +245,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       setState(() {
           listJadwal = data;
       });
+    }
+    double getJarak(){
+      return Geolocator.distanceBetween(latitude, longitude, latitude_desa, longitude_desa) / 1000;
     }
     void getPosition() async {
     try {

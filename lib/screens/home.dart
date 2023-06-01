@@ -34,7 +34,8 @@ class _HomeState extends State<Home> {
         longitude = 0.0 , 
         latitude_desa = 0.0, 
         longitude_desa = 0.0 , 
-        jarak =0.0 , radius =0.0 ;
+        jarak =0.0 , 
+        radius =0.0 ;
 
   bool _isLoading = false , 
       _isTimer = false;
@@ -120,6 +121,7 @@ class _HomeState extends State<Home> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("SIMPUS" , style: TextStyle(color: Colors.black),),
         
