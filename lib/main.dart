@@ -1,7 +1,9 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'screens/home.dart';
 import 'screens/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,14 +15,22 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home: CheckAuth(),
+      home: AnimatedSplashScreen(
+        splash: Image.asset('assets/SIMPUS.png'),
+        nextScreen: CheckAuth(),
+        splashTransition: SplashTransition.slideTransition,
+        duration: 3000,
+        backgroundColor: Colors.white,
+      ),
       darkTheme: ThemeData(brightness: Brightness.light, accentColor: Colors.blueAccent),
       themeMode: ThemeMode.light,
-      // theme: new ThemeData(scaffoldBackgroundColor: const Color(0xFFEFEFEF)),
-
+      routes: {
+        '/home': (context) => Home(),
+      },
     );
   }
 }
+
 class CheckAuth extends StatefulWidget{
   @override
   _CheckAuthState createState() => _CheckAuthState();
@@ -56,6 +66,7 @@ class _CheckAuthState extends State<CheckAuth>{
       child = Login();
     }
 
+  
     return Scaffold(
       body: child,
     );
