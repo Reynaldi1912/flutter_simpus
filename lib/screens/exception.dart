@@ -224,24 +224,24 @@ class _ExceptionPetugasState extends State<ExceptionPetugas> {
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          margin: EdgeInsets.only(left: 5),
-                                          width: 40,
-                                          child: InkWell(
-                                            onTap: () {},
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(3),
-                                                color: Colors.blue, 
-                                              ),
-                                              child: Icon(
-                                                Icons.remove_red_eye,
-                                                size: 35,
-                                                color: Colors.white, 
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                        // Container(
+                                        //   margin: EdgeInsets.only(left: 5),
+                                        //   width: 40,
+                                        //   child: InkWell(
+                                        //     onTap: () {},
+                                        //     child: Container(
+                                        //       decoration: BoxDecoration(
+                                        //         borderRadius: BorderRadius.circular(3),
+                                        //         color: Colors.blue, 
+                                        //       ),
+                                        //       child: Icon(
+                                        //         Icons.remove_red_eye,
+                                        //         size: 35,
+                                        //         color: Colors.white, 
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   )
@@ -305,14 +305,14 @@ class _ExceptionPetugasState extends State<ExceptionPetugas> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  BsSelectBox(
-                    hintTextLabel: 'Status',
-                    controller: _statusController,
-                    autoClose: true,
-                    dialogStyle: BsDialogBoxStyle(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
+                  // BsSelectBox(
+                  //   hintTextLabel: 'Status',
+                  //   controller: _statusController,
+                  //   autoClose: true,
+                  //   dialogStyle: BsDialogBoxStyle(
+                  //     borderRadius: BorderRadius.circular(20.0),
+                  //   ),
+                  // ),
                   SizedBox(height: 10),
                   TextField(
                     controller: _reasonController,
@@ -335,10 +335,8 @@ class _ExceptionPetugasState extends State<ExceptionPetugas> {
                   SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () async {
-                      SharedPreferences localStorage =
-                          await SharedPreferences.getInstance();
-                      var user =
-                          jsonDecode(localStorage.getString('user'));
+                      SharedPreferences localStorage = await SharedPreferences.getInstance();
+                      var user = jsonDecode(localStorage.getString('user'));
 
                       String tanggal = _dateController.text;
                       String status = _statusController.getSelectedAsString();
@@ -364,6 +362,7 @@ class _ExceptionPetugasState extends State<ExceptionPetugas> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = jsonDecode(localStorage.getString('user'));
     List<ExceptionModel> data = await re.getData(user['id']);
+    print(data);
     setState(() {
       listException = data;
     });

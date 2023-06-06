@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_auth/model/HistoryKunjunganModel.dart';
+import 'package:flutter_auth/network/RepositoryKunjungan.dart';
+import 'package:flutter_auth/screens/detailHistory.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryKunjungan extends StatefulWidget {
   const HistoryKunjungan({Key key}) : super(key: key);
@@ -8,15 +14,32 @@ class HistoryKunjungan extends StatefulWidget {
 }
 
 class _HistoryKunjunganState extends State<HistoryKunjungan> {
-  List<String> allVisits = [
-    "19 Desember 2022 - Kegiatan: Sosialisasi Ibu Hamil",
-    "18 Desember 2022 - Kegiatan: Sosialisasi Ibu Hamil",
-    "17 Desember 2022 - Kegiatan: Sosialisasi Ibu Hamil",
-
-    // Daftar kunjungan lainnya
-  ];
+  List<HistoryKunjunganModel> history = [];
+  RepositoryKunjungan re = RepositoryKunjungan();
 
   String searchKeyword = '';
+  int displayedItemCount = 10;
+  ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _prepareData();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  Future<void> _prepareData() async {
+    await getData();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      setState(() {
+        displayedItemCount += 10;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +56,15 @@ class _HistoryKunjunganState extends State<HistoryKunjungan> {
       ),
       body: Container(
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
               Color.fromARGB(255, 255, 255, 255),
               Color.fromARGB(255, 60, 170, 182)
-            ])),
+            ],
+          ),
+        ),
         child: Container(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -71,17 +96,27 @@ class _HistoryKunjunganState extends State<HistoryKunjungan> {
                   });
                 },
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Expanded(
                 child: ListView.builder(
+                  controller: _scrollController,
                   physics: AlwaysScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: allVisits.length,
+                  itemCount: displayedItemCount,
                   itemBuilder: (BuildContext context, int index) {
-                    final visit = allVisits[index];
-                    if (searchKeyword.isNotEmpty && !visit.toLowerCase().contains(searchKeyword)) {
+                    if (index >= history.length) return SizedBox();
+
+                    final visit = history[index];
+                    List<String> tanggal = visit.created_at.split(' ');
+
+                    if (searchKeyword.isNotEmpty &&
+                        !visit.created_at.toLowerCase().contains(searchKeyword) &&
+                        !visit.upaya_kesehatan.toLowerCase().contains(searchKeyword)) {
                       return SizedBox();
                     }
+
                     return Column(
                       children: [
                         Row(
@@ -93,14 +128,31 @@ class _HistoryKunjunganState extends State<HistoryKunjungan> {
                                 alignment: Alignment.centerLeft,
                                 child: Column(
                                   children: [
-                                    Text(visit),
+                                    Align
+                                    (
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "Tanggal Input : " + tanggal[0].toString(),
+                                        style: TextStyle(color: Color.fromARGB(255, 133, 133, 132), fontSize: 12),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(visit.upaya_kesehatan ?? "-")
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
                             Container(
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(context, 
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) => DetailHistory(parameter : visit),
+                                    )
+                                  );
+                                },
                                 child: Icon(Icons.remove_red_eye),
                               ),
                             ),
@@ -117,5 +169,14 @@ class _HistoryKunjunganState extends State<HistoryKunjungan> {
         ),
       ),
     );
+  }
+
+  Future<void> getData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = jsonDecode(localStorage.getString('user'));
+    List<HistoryKunjunganModel> data = await re.getKunjungan(user['id']);
+    setState(() {
+      history = data;
+    });
   }
 }

@@ -20,8 +20,8 @@ class RepositoryException {
       final response = await http.get(Uri.parse(_baseUrl + 'exception_mobile/'+id.toString()));
       if(response.statusCode == 200){
         Iterable it = jsonDecode(response.body);
-        print(it);
         List<ExceptionModel> jadwal = it.map((e) => ExceptionModel.fromJson(e)).toList();
+        print(jadwal);
         return jadwal;
       }
     } catch (e) {
@@ -39,8 +39,7 @@ class RepositoryException {
     }
   }
 
-  Future<void> postDataException(
-      String tanggal, String status, String alasan, int id_desa, int id, BuildContext context) async {
+  Future<void> postDataException(String tanggal, String status, String alasan, int id_desa, int id, BuildContext context) async {
     var url = Uri.parse(_baseUrl + 'exception_mobile'); // Ganti dengan URL endpoint yang sesuai
 
     DateFormat formatLama = DateFormat('dd-MM-yyyy');
@@ -84,7 +83,6 @@ class RepositoryException {
       var body = {
         'id': id,
         'tanggal': tanggalBaru,
-        'status': status,
         'alasan': alasan,
         'id_desa': id_desa
       };

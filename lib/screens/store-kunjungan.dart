@@ -1,9 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:bs_flutter/bs_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:flutter_auth/network/RepositoryKunjungan.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 class StoreKunjungan extends StatefulWidget {
@@ -16,12 +19,26 @@ class StoreKunjungan extends StatefulWidget {
 
 class _StoreKunjunganState extends State<StoreKunjungan> {
   DateTime selectedDate;
-  File image; //for captured image
+  File image; 
+  TextEditingController _nikController = TextEditingController();
+  TextEditingController _namaController = TextEditingController();
+  TextEditingController _alamatController = TextEditingController();
+  TextEditingController _no_hpController = TextEditingController();
+  TextEditingController _tanggal_lahirController = TextEditingController();
+  TextEditingController _jml_anggota_keluargaController = TextEditingController();
+  TextEditingController _berat_badanController = TextEditingController();
+  TextEditingController _tinggi_badanController = TextEditingController();
+  TextEditingController _tekanan_darahController = TextEditingController();
+  TextEditingController _diagnosaController = TextEditingController();
+  TextEditingController _penyuluhanController = TextEditingController();
+
 
   BsSelectBoxController _select2 = BsSelectBoxController(options: [
     BsSelectBoxOption(value: 1, text: Text('punya')),
     BsSelectBoxOption(value: 0, text: Text('tidak')),
   ]);
+
+  RepositoryKunjungan _repository = RepositoryKunjungan();
 
   @override
   void initState() {
@@ -45,6 +62,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
     if (picked != null) {
       setState(() {
         selectedDate = picked;
+        _tanggal_lahirController.text = '${picked.day}-${picked.month}-${picked.year}';
       });
     }
   }
@@ -89,6 +107,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                   TextFormField(
                     cursorColor: Colors.blue,
                     keyboardType: TextInputType.text,
+                    controller: _nikController,
                     decoration: InputDecoration(
                       hintText: "NIK",
                       filled: true, // membuat background terisi
@@ -106,6 +125,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                   TextFormField(
                     cursorColor: Colors.blue,
                     keyboardType: TextInputType.text,
+                    controller: _namaController,
                     decoration: InputDecoration(
                       hintText: "NAMA",
                       filled: true, 
@@ -123,6 +143,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                   TextFormField(
                     cursorColor: Colors.blue,
                     keyboardType: TextInputType.text,
+                    controller: _alamatController,
                     decoration: InputDecoration(
                       hintText: "ALAMAT",
                       filled: true, 
@@ -143,6 +164,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                         child: TextFormField(
                           cursorColor: Colors.blue,
                           keyboardType: TextInputType.number,
+                          controller: _no_hpController,
                           decoration: InputDecoration(
                             hintText: "NO HP",
                             filled: true, // membuat background terisi
@@ -160,6 +182,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                       SizedBox(width: 5,),
                       Expanded(
                         child: InkWell(
+                          
                           onTap: () {
                             _selectDate(context);
                           },
@@ -194,6 +217,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                   TextFormField(
                     cursorColor: Colors.blue,
                     keyboardType: TextInputType.number,
+                    controller: _jml_anggota_keluargaController,
                     decoration: InputDecoration(
                       hintText: "Jumlah Anggota Keluarga",
                       filled: true, // membuat background terisi
@@ -214,6 +238,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                         child: TextFormField(
                           cursorColor: Colors.blue,
                           keyboardType: TextInputType.number,
+                          controller: _berat_badanController,
                           decoration: InputDecoration(
                             hintText: "BB",
                             filled: true, // membuat background terisi
@@ -232,6 +257,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                       Expanded(
                         child: TextFormField(
                           cursorColor: Colors.blue,
+                          controller: _tinggi_badanController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: "TB",
@@ -254,6 +280,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                     children: [
                       Expanded(
                         child: TextFormField(
+                          controller: _tekanan_darahController,
                           cursorColor: Colors.blue,
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
@@ -288,6 +315,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                   TextField(
                       cursorColor: Colors.blue,
                       keyboardType: TextInputType.multiline,
+                      controller: _diagnosaController,
                       maxLines: 4,
                       decoration: InputDecoration(
                       hintText: "Diagnosa",
@@ -306,6 +334,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                   TextField(
                       cursorColor: Colors.blue,
                       keyboardType: TextInputType.multiline,
+                      controller: _penyuluhanController,
                       maxLines: 4,
                       decoration: InputDecoration(
                       hintText: "Konseling / Penyuluhan",
@@ -334,7 +363,28 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () async {},
+                    onPressed: () async {
+                      SharedPreferences localStorage = await SharedPreferences.getInstance();
+                      var user = jsonDecode(localStorage.getString('user'));
+
+                      String nik = _nikController.text;
+                      String nama = _namaController.text;
+                      String alamat = _alamatController.text;
+                      String no_hp = _no_hpController.text;
+                      String tanggal_lahir = _tanggal_lahirController.text;
+                      String tekanan_darah = _tekanan_darahController.text;
+                      String diagnosa = _diagnosaController.text;
+                      String penyuluhan = _penyuluhanController.text;
+                      int jml_anggota_keluarga = int.parse(_jml_anggota_keluargaController.text);
+                      int tinggi_badan = int.parse(_tinggi_badanController.text);
+                      int bpjs = int.parse(_select2.getSelectedAsString());
+                      double berat_badan = double.parse(_berat_badanController.text);
+                      String created_by = user['id'].toString();
+                      File _image = image;
+
+                      _repository.postDataKunjungan(
+                          nik, nama, alamat, no_hp , tanggal_lahir , jml_anggota_keluarga,berat_badan , tinggi_badan , tekanan_darah , bpjs , diagnosa , penyuluhan, created_by, _image, context);
+                    },
                     child: Text('Simpan'),
                   ),
                 ],

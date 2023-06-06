@@ -16,7 +16,7 @@ class RepositoryDesa {
       final response = await http.get(Uri.parse(_baseUrl + 'get-desa/' + id.toString()));
       if(response.statusCode == 200){
         var it = jsonDecode(response.body);
-        return it[0];
+        return it;
       }
     } catch (e) {
       print(e.toString());

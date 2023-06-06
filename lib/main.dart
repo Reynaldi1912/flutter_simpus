@@ -16,11 +16,14 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       home: AnimatedSplashScreen(
-        splash: Image.asset('assets/SIMPUS.png'),
+        splash: Transform.scale(
+          scale: 4.0,
+          child: Image.asset('assets/SIMPUS.png'),
+        ),
         nextScreen: CheckAuth(),
         splashTransition: SplashTransition.slideTransition,
         duration: 3000,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue,
       ),
       darkTheme: ThemeData(brightness: Brightness.light, accentColor: Colors.blueAccent),
       themeMode: ThemeMode.light,
