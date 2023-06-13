@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -148,33 +149,47 @@ class _LoginState extends State<Login>{
      );
   }
 
-  void _login() async{
+  void _login() async {
     setState(() {
       _isLoading = true;
     });
+
     var data = {
       'id' : name,
       'password' : password
     };
 
+    Timer(Duration(seconds: 10), () {
+      if (_isLoading) {
+        setState(() {
+          _isLoading = false;
+        });
+        _showMsg('Login timeout');
+      }
+    });
+
     var res = await Network().auth(data, '/login');
     var body = json.decode(res.body);
-    if(body['success'] && body['role']){
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-      localStorage.setString('token', json.encode(body['token']));
-      localStorage.setString('user', json.encode(body['user']));
-      Navigator.pushReplacement(
-          context,
-          new MaterialPageRoute(
-              builder: (context) => Home()
-          ),
-      );
-    }else{
-      _showMsg(body['message']);
-    }
 
-    setState(() {
-      _isLoading = false;
-    });
+    if (_isLoading) {
+      if (body['success'] && body['role']) {
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.setString('token', json.encode(body['token']));
+        localStorage.setString('user', json.encode(body['user']));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Home()
+          ),
+        );
+      } else {
+        _showMsg(body['message']);
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
+
 }
