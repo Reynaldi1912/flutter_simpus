@@ -7,25 +7,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
 
-class Login extends StatefulWidget{
+class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
 
-class _LoginState extends State<Login>{
+class _LoginState extends State<Login> {
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   var name, password;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _secureText = true;
+  Widget _loadingIndicator = Container();
 
-  showHide(){
+  showHide() {
     setState(() {
       _secureText = !_secureText;
     });
   }
 
-  _showMsg(msg) {
+  _showMsg(String msg) {
     final snackBar = SnackBar(
       content: Text(msg),
     );
@@ -33,14 +34,14 @@ class _LoginState extends State<Login>{
   }
 
   @override
-  Widget build(BuildContext context){
-     return Container(
+  Widget build(BuildContext context) {
+    return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [Color.fromARGB(255, 48, 189, 72), Color.fromARGB(255, 29, 62, 151)])),
-       child: Scaffold(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
         key: _scaffoldKey,
         body: SafeArea(
@@ -55,14 +56,14 @@ class _LoginState extends State<Login>{
                       alignment: Alignment.center,
                       child: Text(
                         "SELAMAT DATANG \n SISTEM INFORMASI MANAJEMEN PUSKESMAS KEDUNGJAJANG",
-                        style: TextStyle(color: Colors.white , fontWeight: FontWeight.bold , fontSize: 20),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 1/8),
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 1 / 8),
                   child: Padding(
                     padding: EdgeInsets.all(24),
                     child: Form(
@@ -71,47 +72,41 @@ class _LoginState extends State<Login>{
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextFormField(
-                            cursorColor: Colors.blue,
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              hintText: "NIP",
-                              filled: true, // membuat background terisi
-                              fillColor: Colors.white, // memberikan warna putih pada background
-                            ),
-                            validator: (nameValue){
-                              if(nameValue.isEmpty){
-                                return 'Please enter your NIPP';
-                              }
-                              name = nameValue;
-                              return null;
-                            }
-                          ),
-
+                              cursorColor: Colors.blue,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                hintText: "NIP",
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              validator: (nameValue) {
+                                if (nameValue.isEmpty) {
+                                  return 'Please enter your NIPP';
+                                }
+                                name = nameValue;
+                                return null;
+                              }),
                           SizedBox(height: 12),
                           TextFormField(
-                            cursorColor: Colors.blue,
-                            keyboardType: TextInputType.text,
-                            obscureText: _secureText,
-                            decoration: InputDecoration(
-                              hintText: "Password",
-                              filled: true, // membuat background terisi
-                              fillColor: Colors.white, // memberikan warna putih pada background
-                              suffixIcon: IconButton(
-                                onPressed: showHide,
-                                icon: Icon(_secureText
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
+                              cursorColor: Colors.blue,
+                              keyboardType: TextInputType.text,
+                              obscureText: _secureText,
+                              decoration: InputDecoration(
+                                hintText: "Password",
+                                filled: true,
+                                fillColor: Colors.white,
+                                suffixIcon: IconButton(
+                                  onPressed: showHide,
+                                  icon: Icon(_secureText ? Icons.visibility_off : Icons.visibility),
+                                ),
                               ),
-                            ),
-                            validator: (passwordValue){
-                              if(passwordValue.isEmpty){
-                                return 'Please enter your password';
-                              }
-                              password = passwordValue;
-                              return null;
-                            }
-                          ),
-
+                              validator: (passwordValue) {
+                                if (passwordValue.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                password = passwordValue;
+                                return null;
+                              }),
                           SizedBox(height: 12),
                           TextButton(
                             style: ButtonStyle(
@@ -119,16 +114,18 @@ class _LoginState extends State<Login>{
                             ),
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                              child: Text(
-                                _isLoading? 'Proccessing..' : 'Login',
-                                textDirection: TextDirection.ltr,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.0,
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
+                              child: _isLoading
+                                  ? _loadingIndicator // Menampilkan indikator circular saat proses login
+                                  : Text(
+                                      'Login',
+                                      textDirection: TextDirection.ltr,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18.0,
+                                        decoration: TextDecoration.none,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
                             ),
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
@@ -145,24 +142,26 @@ class _LoginState extends State<Login>{
             ),
           ),
         ),
-         ),
-     );
+      ),
+    );
   }
 
   void _login() async {
     setState(() {
       _isLoading = true;
+      _loadingIndicator = CircularProgressIndicator(); // Menampilkan indikator circular saat proses login
     });
 
     var data = {
-      'id' : name,
-      'password' : password
+      'id': name,
+      'password': password
     };
 
     Timer(Duration(seconds: 10), () {
       if (_isLoading) {
         setState(() {
           _isLoading = false;
+          _loadingIndicator = Container();
         });
         _showMsg('Login timeout');
       }
@@ -176,20 +175,15 @@ class _LoginState extends State<Login>{
         SharedPreferences localStorage = await SharedPreferences.getInstance();
         localStorage.setString('token', json.encode(body['token']));
         localStorage.setString('user', json.encode(body['user']));
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Home()
-          ),
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
       } else {
-        _showMsg(body['message']);
+        _showMsg(body['message']); // Menampilkan pesan error dari respons API
       }
 
       setState(() {
         _isLoading = false;
+        _loadingIndicator = Container();
       });
     }
   }
-
 }

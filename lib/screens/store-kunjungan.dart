@@ -405,7 +405,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
     int _idDesa = int.parse(user['id_desa']);
     List<dynamic> data = await _repository.getKunjunganExisting(_idDesa);
 
-    if (data.isNotEmpty) {
+    if (data[0].isNotEmpty) {
       setState(() {
         _nikController.text = data[0]['nik'].toString();
         _namaController.text = data[0]['nama'].toString();
