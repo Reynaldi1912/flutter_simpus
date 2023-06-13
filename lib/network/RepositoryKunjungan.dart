@@ -26,7 +26,7 @@ class RepositoryKunjungan {
         print(response.statusCode);
         if (response.statusCode == 200) {
           var jsonData = jsonDecode(response.body);
-          return [jsonData]; // Mengembalikan data kunjungan dalam bentuk List<dynamic>
+          return [jsonData];
         }
       } catch (e) {
         print(e.toString());
@@ -82,7 +82,7 @@ Future<void> postDataKunjungan(
 
   // Simpan gambar sementara ke dalam file dengan nama yang acak
   final tempDir = await getTemporaryDirectory();
-  final uuid = Uuid().v4(); // Generate UUID
+  final uuid = Uuid().v4(); 
   final tempImagePath = '${tempDir.path}/$uuid.jpg';
   File(tempImagePath).writeAsBytesSync(img.encodeJpg(resizedImage, quality: 85));
 

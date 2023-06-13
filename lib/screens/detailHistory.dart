@@ -190,7 +190,7 @@ class _DetailHistoryState extends State<DetailHistory> {
                       TableCell(
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 8),
-                          child: Text(": ${widget.parameter.berat_badan} kg"),
+                          child: Text(": ${widget.parameter.berat_badan.toString()} kg"),
                         ),
                       ),
                     ],
