@@ -20,6 +20,7 @@ class StoreKunjungan extends StatefulWidget {
 class _StoreKunjunganState extends State<StoreKunjungan> {
   DateTime selectedDate;
   File image; 
+  bool _isNIKDisabled = false; 
   TextEditingController _nikController = TextEditingController();
   TextEditingController _namaController = TextEditingController();
   TextEditingController _alamatController = TextEditingController();
@@ -32,7 +33,6 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
   TextEditingController _diagnosaController = TextEditingController();
   TextEditingController _penyuluhanController = TextEditingController();
 
-
   BsSelectBoxController _select2 = BsSelectBoxController(options: [
     BsSelectBoxOption(value: 1, text: Text('punya')),
     BsSelectBoxOption(value: 0, text: Text('tidak')),
@@ -44,6 +44,7 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
   void initState() {
     super.initState();
     selectedDate = DateTime.now();
+    getKunjunganExisting();
   }
 
   Future getImage() async {
@@ -105,8 +106,9 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                   ),
                   SizedBox(height: 20),
                   TextFormField(
+                    enabled: !_isNIKDisabled,
                     cursorColor: Colors.blue,
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.number,
                     controller: _nikController,
                     decoration: InputDecoration(
                       hintText: "NIK",
@@ -394,6 +396,36 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
         ),
       ),
     );
+  }
+
+  void getKunjunganExisting() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = jsonDecode(localStorage.getString('user'));
+
+    int _idDesa = int.parse(user['id_desa']);
+    List<dynamic> data = await _repository.getKunjunganExisting(_idDesa);
+
+    if (data.isNotEmpty) {
+      setState(() {
+        _nikController.text = data[0]['nik'].toString();
+        _namaController.text = data[0]['nama'].toString();
+        _alamatController.text = data[0]['alamat'].toString();
+        _no_hpController.text = data[0]['no_hp'].toString();
+        _jml_anggota_keluargaController.text = data[0]['jml_anggota_keluarga'].toString();
+        _berat_badanController.text = data[0]['berat_badan'].toString();
+        _tinggi_badanController.text = data[0]['tinggi_badan'].toString();
+        _tekanan_darahController.text = data[0]['tekanan_darah'].toString();
+        _diagnosaController.text = data[0]['diagnosa'].toString();
+        _penyuluhanController.text = data[0]['penyuluhan'].toString();
+
+        _isNIKDisabled = true;
+
+      });
+    }else{
+        _isNIKDisabled = false; 
+    }
+    // _alamatController.text = "Alamat Default";
+    // Assign nilai default ke variabel lain sesuai kebutuhan
   }
 }
 
