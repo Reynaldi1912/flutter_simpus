@@ -39,7 +39,7 @@ class RepositoryKunjungan {
       print(response.statusCode);
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
-        print(jsonData);
+        print(id.toString());
         List<HistoryKunjunganModel> data = [];
         for (var item in jsonData) {
           data.add(HistoryKunjunganModel.fromJson(item));
@@ -54,9 +54,9 @@ class RepositoryKunjungan {
 
 Future<void> postDataKunjungan(
   String nik, String nama, String alamat, String no_hp, String tanggal_lahir,
-  int jml_anggota_keluarga, double berat_badan, int tinggi_badan,
+  int jml_anggota_keluarga, String berat_badan, String tinggi_badan,
   String tekanan_darah, int bpjs, String diagnosa, String penyuluhan,
-  String created_by, File image, BuildContext context) async {
+  String created_by, File image,int idDesa, BuildContext context) async {
 
     showDialog(
       context: context,
@@ -73,6 +73,7 @@ Future<void> postDataKunjungan(
         );
       },
     );
+
   // Load gambar ke dalam image.Image
   final bytes = await image.readAsBytes();
   final imageBytes = img.decodeImage(bytes);
@@ -110,6 +111,7 @@ Future<void> postDataKunjungan(
   request.fields['diagnosa'] = diagnosa;
   request.fields['penyuluhan'] = penyuluhan;
   request.fields['created_by'] = created_by;
+  request.fields['id_desa'] = idDesa.toString();
   request.files.add(imageFile);
 
   try {

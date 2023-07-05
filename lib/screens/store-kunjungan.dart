@@ -366,6 +366,33 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
+                       if (_nikController.text.isEmpty ||
+                        _namaController.text.isEmpty ||
+                        _alamatController.text.isEmpty ||
+                        _no_hpController.text.isEmpty ||
+                        _tanggal_lahirController.text.isEmpty ||
+                        _jml_anggota_keluargaController.text.isEmpty ||
+                        _berat_badanController.text.isEmpty ||
+                        _tinggi_badanController.text.isEmpty ||
+                        _tekanan_darahController.text.isEmpty ||
+                        _diagnosaController.text.isEmpty ||
+                        _penyuluhanController.text.isEmpty ||
+                        image == null) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Error'),
+                          content: Text('Mohon lengkapi semua field'),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                      return; // Menghentikan eksekusi jika ada field yang kosong
+                    }
                       SharedPreferences localStorage = await SharedPreferences.getInstance();
                       var user = jsonDecode(localStorage.getString('user'));
 
@@ -378,14 +405,15 @@ class _StoreKunjunganState extends State<StoreKunjungan> {
                       String diagnosa = _diagnosaController.text;
                       String penyuluhan = _penyuluhanController.text;
                       int jml_anggota_keluarga = int.parse(_jml_anggota_keluargaController.text);
-                      int tinggi_badan = int.parse(_tinggi_badanController.text);
+                      String tinggi_badan = _tinggi_badanController.text;
                       int bpjs = int.parse(_select2.getSelectedAsString());
-                      double berat_badan = double.parse(_berat_badanController.text);
+                      String berat_badan = _berat_badanController.text;
                       String created_by = user['id'].toString();
                       File _image = image;
+                      int _idDesa = int.parse(user['id_desa']);
 
                       _repository.postDataKunjungan(
-                          nik, nama, alamat, no_hp , tanggal_lahir , jml_anggota_keluarga,berat_badan , tinggi_badan , tekanan_darah , bpjs , diagnosa , penyuluhan, created_by, _image, context);
+                          nik, nama, alamat, no_hp , tanggal_lahir , jml_anggota_keluarga,berat_badan , tinggi_badan , tekanan_darah , bpjs , diagnosa , penyuluhan, created_by, _image, _idDesa, context);
                     },
                     child: Text('Simpan'),
                   ),

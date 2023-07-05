@@ -10,7 +10,6 @@ import 'package:flutter_auth/screens/errorPage/error-jadwal.dart';
 import 'package:flutter_auth/screens/errorPage/error-radius.dart';
 import 'package:flutter_auth/screens/exception.dart';
 import 'package:flutter_auth/screens/history.dart';
-import 'package:flutter_auth/screens/setting.dart';
 import 'package:flutter_auth/screens/store-kunjungan.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -153,18 +152,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 );
               },
             ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Setting"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                      builder: (context) => Setting()
-                  ),
-                );
-              },
-            ),
+            // ListTile(
+            //   leading: Icon(Icons.settings),
+            //   title: Text("Setting"),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       new MaterialPageRoute(
+            //           builder: (context) => Setting()
+            //       ),
+            //     );
+            //   },
+            // ),
             SizedBox(height: 30),
             Container(
               padding: EdgeInsets.only(left: 20 , right: 20),
@@ -187,24 +186,42 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     );
   }
 
-  _showMsg(msg) {
-    final snackBar = SnackBar(
-      content: Text(msg),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
+_showMsg(msg) {
+  final snackBar = SnackBar(
+    content: Text(msg),
+  );
+  ScaffoldMessenger.of(context).removeCurrentSnackBar(); // Tambahkan baris ini
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
 
-  void logout(BuildContext context) async {
-    var res = await Network().getData('/logout');
-    var body = json.decode(res.body);
-    if (body['success']) {
+
+ void logout(BuildContext context) async {
+  var res = await Network().getData('/logout');
+  var body = json.decode(res.body);
+  if (body['message'] == 'Logout successfully' || body['message'] == 'Unauthenticated.') {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    localStorage.remove('user');
+    localStorage.remove('token');
+    await localStorage.commit(); // Simpan perubahan ke localStorage
+
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+  } else {
+    if (body['message'] == 'Unauthenticated.') {
+      // Hapus data pengguna dan token
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.remove('user');
       localStorage.remove('token');
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Login()));
+      await localStorage.commit();
+
+      // Navigasi ke halaman login
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+    } else {
+        _showMsg("Failed to logout");
     }
   }
+}
+
+
 
     _loadUserData() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();

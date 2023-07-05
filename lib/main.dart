@@ -63,9 +63,12 @@ class _CheckAuthState extends State<CheckAuth>{
   @override
   Widget build(BuildContext context){
     Widget child;
+    print(isAuth);
     if(isAuth){
+      print("Berhasil");
       child = Home();
     } else{
+      print("Gagal");
       child = Login();
     }
 

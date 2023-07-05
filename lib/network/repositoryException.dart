@@ -21,7 +21,6 @@ class RepositoryException {
       if(response.statusCode == 200){
         Iterable it = jsonDecode(response.body);
         List<ExceptionModel> jadwal = it.map((e) => ExceptionModel.fromJson(e)).toList();
-        print(jadwal);
         return jadwal;
       }
     } catch (e) {

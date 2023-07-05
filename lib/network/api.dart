@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Network{
-  final String _url = 'http://103.150.191.230/api/';
-    // final String _url = 'https://dc4c-125-166-118-10.ngrok-free.app/api/';
+  final String _url = 'http://103.175.219.168/api/';
+    // final String _url = 'https://ca3e-117-103-69-172.ngrok-free.app/api/';
   var token;
 
   String getUrl(){

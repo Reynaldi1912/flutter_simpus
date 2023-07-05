@@ -137,8 +137,8 @@ class _ExceptionPetugasState extends State<ExceptionPetugas> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(listException[index].status_appr == 0 ? 'Pending' : listException[index].status_appr == 1 ? 'Disetujui' : 'Ditolak' ,
-                                          style: TextStyle(color: listException[index].status_appr == 0 ? Colors.amber : listException[index].status_appr == Colors.green ? 'Disetujui' : Colors.red)
+                                        Text(listException[index].status_appr.toInt() == 0 ? 'Pending' : listException[index].status_appr.toInt() == 1 ? 'Disetujui' : 'Ditolak' ,
+                                          style: TextStyle(color: listException[index].status_appr.toInt() == 0 ? Colors.amber : listException[index].status_appr.toInt() == 1 ? Colors.green : Colors.red)
                                         ),
                                         SizedBox(height: 5),
                                         Text("Jadwal : "+listException[index].tanggal_mulai , style: TextStyle(fontSize: 15 , fontWeight: FontWeight.bold)),
@@ -151,6 +151,7 @@ class _ExceptionPetugasState extends State<ExceptionPetugas> {
                                   Container(
                                     child: Row(
                                       children: [
+                                        listException[index].status_appr.toInt() == 0 ?
                                         Container(
                                           width: 40,
                                           child: InkWell(
@@ -223,7 +224,7 @@ class _ExceptionPetugasState extends State<ExceptionPetugas> {
                                               ),
                                             ),
                                           ),
-                                        ),
+                                        ) : Container(),
                                         // Container(
                                         //   margin: EdgeInsets.only(left: 5),
                                         //   width: 40,

@@ -9,7 +9,7 @@ class HistoryKunjunganModel {
   final String no_hp;
   final String alamat;
   final String berat_badan;
-  final int tinggi_badan;
+  final String tinggi_badan;
   final String nama;
   final String diagnosa;
   final String tekanan_darah;

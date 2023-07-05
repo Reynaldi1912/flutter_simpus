@@ -1,6 +1,6 @@
 class ExceptionModel {
   final int id;
-  final int id_user;
+  final String id_user;
   final int status_appr;
   final String tanggal_mulai;
   final String alasan;
