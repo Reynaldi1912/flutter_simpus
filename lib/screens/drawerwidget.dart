@@ -259,9 +259,9 @@ _showMsg(msg) {
         radius = double.parse(desaData['radius']);
         nama_desa = desaData['nama_desa'].toString();
       }
-      setState(() {
-          listJadwal = data;
-      });
+      // setState(() {
+      //     listJadwal = data;
+      // });
     }
     double getJarak(){
       return Geolocator.distanceBetween(latitude, longitude, latitude_desa, longitude_desa) / 1000;

@@ -22,6 +22,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  DateTime timeNow;
   String id, 
         nama_lengkap , 
         nama_kegiatan = 'Tidak Ada Kegiatan' , 
@@ -146,55 +147,81 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  margin:EdgeInsets.only(top: 20 , left: 10 , right: 10),
-                  padding: EdgeInsets.only(top : 5),
-                  height: height*2/10,
-                  decoration: BoxDecoration(
-                    color: id_jadwal != 0 ? Color.fromARGB(255, 24, 192, 18) :Colors.red,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Jadwal Hari Ini' , 
-                              style: TextStyle(
-                                color: Colors.white
-                              ),
-                            ),
-                            Text(DateFormat.yMMMMd('en_US').format(DateTime.now()),
-                              style: TextStyle(
-                                color: Colors.white
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 255, 255, 255)
-                          ),
-                          child: Column(
+                  margin: EdgeInsets.only(top: 20, left: 10, right: 10),
+                  padding: EdgeInsets.only(top: 5),
+                  child: Container(
+                    height: height * 2 / 10,
+                    decoration: BoxDecoration(
+                      color: id_jadwal != 0 ? Color.fromARGB(255, 24, 192, 18) : Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Align(alignment: Alignment.centerLeft, child: Text(nama_kegiatan == null ? '' : nama_kegiatan , style: TextStyle(fontSize: 15 , fontWeight: FontWeight.bold),)),
-                              Align(alignment: Alignment.centerLeft, child: Text(rincian_kegiatan == null ? '' : rincian_kegiatan , style: TextStyle(fontSize: 12),)) , 
-                              SizedBox(height: 10),
-                              Align(alignment: Alignment.centerLeft, child: Text('Nama Pelaksana 1 : ' + (nama_pelaksana1 == null ? '' : nama_pelaksana1) , style: TextStyle(fontSize: 10 , color: Color.fromARGB(255, 189, 189, 189)))) , 
-                              Align(alignment: Alignment.centerLeft, child: Text('Nama Pelaksana 2 : ' + (nama_pelaksana2 == null ? '' : nama_pelaksana2), style: TextStyle(fontSize: 10 , color: Color.fromARGB(255, 189, 189, 189)))) , 
+                              Text(
+                                'Jadwal Hari Ini',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                DateFormat.yMMMMd('en_US').format(timeNow),
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ],
                           ),
                         ),
-                      )
-                    ],
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      nama_kegiatan == null ? '-' : nama_kegiatan,
+                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      rincian_kegiatan == null ? '-' : rincian_kegiatan,
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Nama Pelaksana 1 : ' + (nama_pelaksana1 == null ? '-' : nama_pelaksana1),
+                                      style: TextStyle(fontSize: 10, color: Color.fromARGB(255, 189, 189, 189)),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Nama Pelaksana 2 : ' + (nama_pelaksana2 == null ? '-' : nama_pelaksana2),
+                                      style: TextStyle(fontSize: 10, color: Color.fromARGB(255, 189, 189, 189)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+
+
                 Container(
                   margin:EdgeInsets.only( left: 10 , right: 10),
                   padding: EdgeInsets.only(top: 10 ),
@@ -299,10 +326,11 @@ class _HomeState extends State<Home> {
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        'pelaksana 1 : ' + listJadwal[index].nama_pelaksana1 + ' , pelaksana 2 : ' + listJadwal[index].nama_pelaksana2,
+                                        'pelaksana 1 : ${listJadwal[index].nama_pelaksana1 ?? '-'} , pelaksana 2 : ${listJadwal[index].nama_pelaksana2 ?? '-'}',
                                         style: TextStyle(fontSize: 10, color: Color.fromARGB(255, 173, 173, 173)),
                                       ),
                                     ),
+
                                   ],
                                 ),
                               );
@@ -365,6 +393,7 @@ class _HomeState extends State<Home> {
     var user = jsonDecode(localStorage.getString('user'));
 
     int _idDesa = int.parse(user['id_desa']);
+    timeNow = await repository.getTimeNow();
 
     List<Jadwal> data = await repository.getData(_idDesa);
     if(await repository.getJadwalNow(_idDesa) != null){

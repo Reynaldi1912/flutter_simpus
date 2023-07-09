@@ -25,16 +25,35 @@ class RepositoryJadwal {
     }
   }
 
+  Future getTimeNow() async {
+    try {
+        final current_time = await http.get(Uri.parse(_baseUrl + 'jadwal-mobile/create'));
+        var responseJson = jsonDecode(current_time.body);
+        String currentTime = responseJson['CURRENT_TIME'];
+
+        DateTime currentDateTime = DateTime.parse(currentTime);
+          if(current_time.statusCode == 200){
+              return currentDateTime;
+          }
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+
   Future getJadwalNow(id) async{
     try {
     final response = await http.get(Uri.parse(_baseUrl + 'jadwal-mobile/' + id.toString()));
+    final current_time = await http.get(Uri.parse(_baseUrl + 'jadwal-mobile/create'));
+    var responseJson = jsonDecode(current_time.body);
+    String currentTime = responseJson['CURRENT_TIME'];
+
+    DateTime currentDateTime = DateTime.parse(currentTime);
       if(response.statusCode == 200){
         var it = jsonDecode(response.body);
-        DateTime now = DateTime.now();
 
-        String year = now.year.toString();
-        String month = now.month.toString().padLeft(2, '0');
-        String day = now.day.toString().padLeft(2, '0');
+        String year = currentDateTime.year.toString();
+        String month = currentDateTime.month.toString().padLeft(2, '0');
+        String day = currentDateTime.day.toString().padLeft(2, '0');
 
         var filteredObj = it.firstWhere((element) => element['tanggal_mulai'] == "$year-$month-$day" , orElse: () => null);
         if (filteredObj != null) {
